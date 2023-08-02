@@ -31,8 +31,7 @@ final class RMService {
         completion: @escaping (Result<T, Error>) -> Void) {
             guard let urlRequest = self.request(from: request) else {
                 completion(.failure(RMServiceError.failedToCreateRequest))
-                return
-            }
+                return }
             let task  = URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, _, error in
                 guard let data = data, error == nil else {
                     completion(.failure(error ?? RMServiceError.failedToGetData))
