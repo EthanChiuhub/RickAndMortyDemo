@@ -9,24 +9,21 @@ import UIKit
 
 class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     static let cellIdentifier = "RMCharacterPhotoCollectionViewCell"
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError()
     }
-    
-    private func setUpConstraints() {
-        
-    }
-    
+
+    private func setUpConstraints() {}
+
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-    
-    public func configer(with viewModel: RMCharacterPhotoCollectionViewCellViewModel) {
-        
-    }
+
+    public func configer(with _: RMCharacterPhotoCollectionViewCellViewModel) {}
 }

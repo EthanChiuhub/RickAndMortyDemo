@@ -9,58 +9,57 @@ import Foundation
 
 /// Object that represents a single API call
 final class RMRequest {
-    
     // Base url
     // Endpoint
     // Path components
     // Query parameters
-    
+
     /// API Constants
-    private struct Constants {
+    private enum Constants {
         static let baseUrl = "https://rickandmortyapi.com/api"
     }
-    
+
     /// Desired endpoint
     private let endpoint: RMEndpoint
-    
+
     /// Path components for API, if any
     private let pathComponents: [String]
     /// Query arguments for API, if any
     private let queryParameters: [URLQueryItem]
-    
+
     /// Constructed url for the api request in string format
     private var ulrString: String {
         var string = Constants.baseUrl
         string += "/"
         string += endpoint.rawValue
-        
+
         if !pathComponents.isEmpty {
-            pathComponents.forEach({
+            pathComponents.forEach {
                 string += "/\($0)"
-            })
+            }
         }
         if !queryParameters.isEmpty {
             string += "?"
-            let argumentString = queryParameters.compactMap({
+            let argumentString = queryParameters.compactMap {
                 guard let value = $0.value else { return nil }
                 return "\($0.name)=\(value)"
-            }).joined(separator: "&")
-            
+            }.joined(separator: "&")
+
             string += argumentString
         }
         return string
     }
-    
+
     /// Computed & constructed API url
     public var url: URL? {
         return URL(string: ulrString)
     }
-    
+
     /// Desired http method
     public let httpMethod = "GET"
-    
+
     // MARK: - Public
-    
+
     /// Construct request
     /// - Parameters:
     ///   - endpoint: Target endpoint
@@ -74,9 +73,8 @@ final class RMRequest {
         self.endpoint = endpoint
         self.pathComponents = pathComponents
         self.queryParameters = queryParameters
-        
     }
-    
+
     /// Attemp to create request
     /// - Parameter url: URL to parse
     convenience init?(url: URL) {
@@ -84,7 +82,7 @@ final class RMRequest {
         if !string.contains(Constants.baseUrl) {
             return nil
         }
-        let trimmed = string.replacingOccurrences(of: Constants.baseUrl+"/", with: "")
+        let trimmed = string.replacingOccurrences(of: Constants.baseUrl + "/", with: "")
         if trimmed.contains("/") {
             let components = trimmed.components(separatedBy: "/")
             if !components.isEmpty {
@@ -107,7 +105,7 @@ final class RMRequest {
                 let endpointString = components[0]
                 let queryItemsString = components[1]
                 // value=name&value=name
-                let queryItems: [URLQueryItem] = queryItemsString.components(separatedBy: "&").compactMap({
+                let queryItems: [URLQueryItem] = queryItemsString.components(separatedBy: "&").compactMap {
                     guard $0.contains("=") else {
                         return nil
                     }
@@ -117,7 +115,7 @@ final class RMRequest {
                         name: parts[0],
                         value: parts[1]
                     )
-                })
+                }
 
                 if let rmEndpoint = RMEndpoint(rawValue: endpointString) {
                     self.init(endpoint: rmEndpoint, queryParameters: queryItems)

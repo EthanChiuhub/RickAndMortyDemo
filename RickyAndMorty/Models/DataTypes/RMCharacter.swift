@@ -21,5 +21,3 @@ struct RMCharacter: Codable {
     let url: String
     let created: String
 }
-
-

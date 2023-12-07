@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct RMSingletLocation: Codable {
     let name: String
     let url: String
