@@ -4,7 +4,8 @@
 //
 //  Created by Yi Chun Chiu on 2023/7/20.
 //
-
+import Alamofire
+import Combine
 import Foundation
 
 /// Primary API service object to get Rick and Morty data
@@ -25,27 +26,17 @@ final class RMService {
     ///   - completion: Callback with data or error
     public func execute<T: Codable>(
         _ request: RMRequest,
-        expecting type: T.Type,
-        completion: @escaping (Result<T, Error>) -> Void
-    ) {
+        expecting type: T.Type
+    ) -> AnyPublisher<T, AFError> {
         guard let urlRequest = self.request(from: request) else {
-            completion(.failure(RMServiceError.failedToCreateRequest))
-            return
+            return Fail(error: RMServiceError.failedToCreateRequest as! AFError).eraseToAnyPublisher()
         }
-        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, _, error in
-            guard let data = data, error == nil else {
-                completion(.failure(error ?? RMServiceError.failedToGetData))
-                return
-            }
-            // Decode response
-            do {
-                let result = try JSONDecoder().decode(type.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        task.resume()
+        return AF
+            .request(urlRequest)
+            .publishDecodable(type: type)
+            .value().mapError { error in
+                error
+            }.eraseToAnyPublisher()
     }
 
     // MARK: - Private

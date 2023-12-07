@@ -8,4 +8,6 @@ target 'RickyAndMorty' do
   # Pods for RickyAndMorty
 pod 'SwiftFormat/CLI', '~> 0.49'
 pod 'SwiftLint'
+pod 'Alamofire'
+
 end

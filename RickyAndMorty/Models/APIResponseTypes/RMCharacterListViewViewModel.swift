@@ -5,17 +5,17 @@
 //  Created by Yi Chun Chiu on 2023/7/31.
 //
 
+import Combine
 import UIKit
 
-protocol RMCharacterListViewViewModelDelegate: AnyObject {
-    func didLoadInitialCharacters()
-    func didLoadMoreCharacter(with newIndexPaths: [IndexPath])
-    func didSelectCharacter(_ character: RMCharacter)
-}
 
 /// View Model to handle character list view logic
 final class RMCharacterListViewViewModel: NSObject {
-    public weak var delegate: RMCharacterListViewViewModelDelegate?
+    var cancellables = Set<AnyCancellable>()
+
+    let didLoadInitialCharacters = PassthroughSubject<Void, Never>()
+    let didLoadMoreCharacter = PassthroughSubject<[IndexPath], Never>()
+    let didSelectCharacter = PassthroughSubject<RMCharacter, Never>()
 
     private var isLoadingMoreCharacters = false
 
@@ -36,20 +36,23 @@ final class RMCharacterListViewViewModel: NSObject {
 
     /// Fetch initial set of characters(20)
     public func fetchCharacters() {
-        RMService.shared.execute(.listCharacterRequests, expecting: RMGetAllCharacterResponse.self) { [weak self] result in
-            switch result {
-            case let .success(responseModel):
-                let results = responseModel.results
-                let info = responseModel.info
+        RMService.shared.execute(.listCharacterRequests,
+                                 expecting: RMGetAllCharacterResponse.self)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    print(String(describing: error))
+                }
+            }, receiveValue: { [weak self] result in
+                let results = result.results
+                let info = result.info
                 self?.characters = results
                 self?.apiInfo = info
-                DispatchQueue.main.async {
-                    self?.delegate?.didLoadInitialCharacters()
-                }
-            case let .failure(error):
-                print(String(describing: error))
-            }
-        }
+                self?.didLoadInitialCharacters.send()
+            }).store(in: &cancellables)
     }
 
     /// Paginate if additional characters are needed
@@ -63,14 +66,22 @@ final class RMCharacterListViewViewModel: NSObject {
             return
         }
         // Fetch characters
-        RMService.shared.execute(request, expecting: RMGetAllCharacterResponse.self) { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
-            switch result {
-            case let .success(responseModel):
-                let moreResults = responseModel.results
-                let info = responseModel.info
+        RMService.shared.execute(request,
+                                 expecting: RMGetAllCharacterResponse.self)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    print(String(describing: error))
+                    self.isLoadingMoreCharacters = false
+                }
+            }, receiveValue: { [weak self] result in
+                guard let strongSelf = self else {
+                    return
+                }
+                let moreResults = result.results
+                let info = result.info
                 strongSelf.apiInfo = info
                 let originalCount = strongSelf.characters.count
                 let newCount = moreResults.count
@@ -81,14 +92,10 @@ final class RMCharacterListViewViewModel: NSObject {
                 }
                 strongSelf.characters.append(contentsOf: moreResults)
                 DispatchQueue.main.async {
-                    strongSelf.delegate?.didLoadMoreCharacter(with: indexPAthsToAdd)
+                    strongSelf.didLoadMoreCharacter.send(indexPAthsToAdd)
                     strongSelf.isLoadingMoreCharacters = false
                 }
-            case let .failure(error):
-                print(String(describing: error))
-                strongSelf.isLoadingMoreCharacters = false
-            }
-        }
+            })
     }
 
     public var shouldShowLoadMoreIndicator: Bool {
@@ -120,7 +127,7 @@ extension RMCharacterListViewViewModel: UICollectionViewDataSource, UICollection
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let character = characters[indexPath.row]
-        delegate?.didSelectCharacter(character)
+        didSelectCharacter.send(character)
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
