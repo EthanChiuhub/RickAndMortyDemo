@@ -5,21 +5,24 @@
 //  Created by Yi Chun Chiu on 2023/7/19.
 //
 
+import Combine
 import UIKit
 
 /// Controller to show and search for Characters
-final class RMCharacterViewController: UIViewController, RMCharacterListViewDelegate {
+final class RMCharacterViewController: UIViewController {
     private let characterListView = RMCharacterListView()
+
+    var cancellables = Set<AnyCancellable>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         title = "Characters"
         setupView()
+        rmCHaracterListView()
     }
 
     private func setupView() {
-        characterListView.delegate = self
         view.addSubview(characterListView)
         NSLayoutConstraint.activate([
             characterListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -31,11 +34,14 @@ final class RMCharacterViewController: UIViewController, RMCharacterListViewDele
 
     // MARK: - RMCharacterListViewDelegate
 
-    func rmCHaracterListView(_: RMCharacterListView, didSelectCharacter character: RMCharacter) {
+    func rmCHaracterListView() {
         // Open detail controller for that character
-        let viewModel = RMCharacterDetailViewViewModel(character: character)
-        let detailVC = RMCharacterDetailViewController(viewModel: viewModel)
-        detailVC.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(detailVC, animated: true)
+        characterListView.rmCHaracterListView
+            .sink { [weak self] _, rmCharacter in
+                let viewModel = RMCharacterDetailViewViewModel(character: rmCharacter)
+                let detailVC = RMCharacterDetailViewController(viewModel: viewModel)
+                detailVC.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(detailVC, animated: true)
+            }.store(in: &cancellables)
     }
 }

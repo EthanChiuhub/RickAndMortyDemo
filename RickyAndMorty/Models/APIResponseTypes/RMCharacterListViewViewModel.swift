@@ -8,14 +8,14 @@
 import Combine
 import UIKit
 
-
+typealias Event<T> = PassthroughSubject<T, Never>
 /// View Model to handle character list view logic
 final class RMCharacterListViewViewModel: NSObject {
     var cancellables = Set<AnyCancellable>()
 
-    let didLoadInitialCharacters = PassthroughSubject<Void, Never>()
-    let didLoadMoreCharacter = PassthroughSubject<[IndexPath], Never>()
-    let didSelectCharacter = PassthroughSubject<RMCharacter, Never>()
+    public let didLoadInitialCharacters = Event<Void>()
+    public let didLoadMoreCharacter = Event<[IndexPath]>()
+    public let didSelectCharacter = Event<RMCharacter>()
 
     private var isLoadingMoreCharacters = false
 
@@ -42,7 +42,7 @@ final class RMCharacterListViewViewModel: NSObject {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    break
+                    self.didLoadInitialCharacters.send()
                 case let .failure(error):
                     print(String(describing: error))
                 }
@@ -51,7 +51,6 @@ final class RMCharacterListViewViewModel: NSObject {
                 let info = result.info
                 self?.characters = results
                 self?.apiInfo = info
-                self?.didLoadInitialCharacters.send()
             }).store(in: &cancellables)
     }
 
@@ -95,7 +94,7 @@ final class RMCharacterListViewViewModel: NSObject {
                     strongSelf.didLoadMoreCharacter.send(indexPAthsToAdd)
                     strongSelf.isLoadingMoreCharacters = false
                 }
-            })
+            }).store(in: &cancellables)
     }
 
     public var shouldShowLoadMoreIndicator: Bool {

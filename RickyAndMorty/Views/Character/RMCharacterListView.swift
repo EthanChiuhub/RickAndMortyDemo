@@ -5,17 +5,24 @@
 //  Created by Yi Chun Chiu on 2023/7/31.
 //
 
+import Combine
 import UIKit
 
-protocol RMCharacterListViewDelegate: AnyObject {
-    func rmCHaracterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter)
-}
+// protocol RMCharacterListViewDelegate: AnyObject {
+//    func rmCHaracterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter)
+// }
 
 /// View that handles showing list of characters. loader. etc
 final class RMCharacterListView: UIView {
+    var cancellables = Set<AnyCancellable>()
+
     private let viewModel = RMCharacterListViewViewModel()
 
-    public weak var delegate: RMCharacterListViewDelegate?
+    public let rmCHaracterListView = PassthroughSubject<(RMCharacterListView,
+                                                         RMCharacter),
+        Never>()
+
+    //    public weak var delegate: RMCharacterListViewDelegate?
 
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -45,14 +52,21 @@ final class RMCharacterListView: UIView {
         addSubviews(spinner, collectionView)
         addConstraints()
         spinner.startAnimating()
-        viewModel.delegate = self
         viewModel.fetchCharacters()
         setUpCollectionView()
+        subscribeEvent()
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("Unsupported")
+    }
+
+    /// Subscribe ViewModel event
+    private func subscribeEvent() {
+        didLoadInitialCharacters()
+        didLoadMoreCharacter()
+        didSelectCharacter(rmCHaracterListView: self)
     }
 
     private func addConstraints() {
@@ -75,23 +89,29 @@ final class RMCharacterListView: UIView {
     }
 }
 
-extension RMCharacterListView: RMCharacterListViewViewModelDelegate {
-    func didSelectCharacter(_ character: RMCharacter) {
-        delegate?.rmCHaracterListView(self, didSelectCharacter: character)
+extension RMCharacterListView {
+    func didSelectCharacter(rmCHaracterListView: RMCharacterListView) {
+        viewModel.didSelectCharacter.sink { [weak self] character in
+            self?.rmCHaracterListView.send((rmCHaracterListView, character))
+        }.store(in: &cancellables)
     }
 
     func didLoadInitialCharacters() {
-        spinner.stopAnimating()
-        collectionView.isHidden = false
-        collectionView.reloadData()
-        UIView.animate(withDuration: 0.3, animations: {
-            self.collectionView.alpha = 1
-        })
+        viewModel.didLoadInitialCharacters.sink { [weak self] _ in
+            self?.spinner.stopAnimating()
+            self?.collectionView.isHidden = false
+            self?.collectionView.reloadData()
+            UIView.animate(withDuration: 0.3, animations: {
+                self?.collectionView.alpha = 1
+            })
+        }.store(in: &cancellables)
     }
 
-    func didLoadMoreCharacter(with newIndexPath: [IndexPath]) {
-        collectionView.performBatchUpdates {
-            self.collectionView.insertItems(at: newIndexPath)
-        }
+    func didLoadMoreCharacter() {
+        viewModel.didLoadMoreCharacter.sink { [weak self] newIndexPath in
+            self?.collectionView.performBatchUpdates {
+                self?.collectionView.insertItems(at: newIndexPath)
+            }
+        }.store(in: &cancellables)
     }
 }
