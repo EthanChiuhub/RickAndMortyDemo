@@ -32,11 +32,11 @@ final class RMCharacterViewController: UIViewController {
         ])
     }
 
-    // MARK: - RMCharacterListViewDelegate
+    // MARK: - RMCharacterListView Combine function
 
     func rmCHaracterListView() {
         // Open detail controller for that character
-        characterListView.rmCHaracterListView
+        characterListView.rmCharacterListView
             .sink { [weak self] _, rmCharacter in
                 let viewModel = RMCharacterDetailViewViewModel(character: rmCharacter)
                 let detailVC = RMCharacterDetailViewController(viewModel: viewModel)

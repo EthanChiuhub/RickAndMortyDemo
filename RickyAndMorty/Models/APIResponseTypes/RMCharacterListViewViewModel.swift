@@ -22,7 +22,11 @@ final class RMCharacterListViewViewModel: NSObject {
     private var characters: [RMCharacter] = [] {
         didSet {
             for character in characters {
-                let viewModel = RMCharacterCollectionViewCellViewModel(characterName: character.name, characterStatus: character.status, characterImageUrl: URL(string: character.image))
+                let viewModel = RMCharacterCollectionViewCellViewModel(
+                    characterName: character.name,
+                    characterStatus: character.status,
+                    characterImageUrl: URL(string: character.image)
+                )
                 if !cellViewModels.contains(viewModel) {
                     cellViewModels.append(viewModel)
                 }

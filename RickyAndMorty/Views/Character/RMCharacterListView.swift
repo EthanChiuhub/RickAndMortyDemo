@@ -8,21 +8,14 @@
 import Combine
 import UIKit
 
-// protocol RMCharacterListViewDelegate: AnyObject {
-//    func rmCHaracterListView(_ characterListView: RMCharacterListView, didSelectCharacter character: RMCharacter)
-// }
-
 /// View that handles showing list of characters. loader. etc
 final class RMCharacterListView: UIView {
     var cancellables = Set<AnyCancellable>()
 
     private let viewModel = RMCharacterListViewViewModel()
 
-    public let rmCHaracterListView = PassthroughSubject<(RMCharacterListView,
-                                                         RMCharacter),
-        Never>()
-
-    //    public weak var delegate: RMCharacterListViewDelegate?
+    public let rmCharacterListView = PassthroughSubject<(RMCharacterListView,
+                                                         RMCharacter), Never>()
 
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -92,7 +85,7 @@ final class RMCharacterListView: UIView {
 extension RMCharacterListView {
     func didSelectCharacter(rmCHaracterListView: RMCharacterListView) {
         viewModel.didSelectCharacter.sink { [weak self] character in
-            self?.rmCHaracterListView.send((rmCHaracterListView, character))
+            self?.rmCharacterListView.send((rmCHaracterListView, character))
         }.store(in: &cancellables)
     }
 

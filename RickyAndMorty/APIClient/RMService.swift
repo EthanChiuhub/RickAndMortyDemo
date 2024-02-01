@@ -27,9 +27,9 @@ final class RMService {
     public func execute<T: Codable>(
         _ request: RMRequest,
         expecting type: T.Type
-    ) -> AnyPublisher<T, AFError> {
+    ) -> AnyPublisher<T, Error> {
         guard let urlRequest = self.request(from: request) else {
-            return Fail(error: RMServiceError.failedToCreateRequest as! AFError).eraseToAnyPublisher()
+            return Fail(error: RMServiceError.failedToCreateRequest).eraseToAnyPublisher()
         }
         return AF
             .request(urlRequest)
