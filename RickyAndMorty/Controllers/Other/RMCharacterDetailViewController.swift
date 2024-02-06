@@ -89,13 +89,11 @@ extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectio
         case let .infomation(viewModel):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterInfoCollectionViewCell.cellIdentifier, for: indexPath) as? RMCharacterInfoCollectionViewCell else { fatalError()
             }
-            cell.backgroundColor = .systemRed
             cell.configer(with: viewModel[indexPath.row])
             return cell
         case let .episodes(viewModel):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterEpisodeCollectionViewCell.cellIdentifier, for: indexPath) as? RMCharacterEpisodeCollectionViewCell else { fatalError()
             }
-            cell.backgroundColor = .systemOrange
             cell.configer(with: viewModel[indexPath.row])
             return cell
         }
