@@ -13,15 +13,14 @@ class RMCharacterInfoCollectionViewCell: UICollectionViewCell {
     private let valueLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Earth"
         label.font = .systemFont(ofSize: 18, weight: .light)
+        label.numberOfLines = 0
         return label
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Location"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 20, weight: .medium)
         return label
@@ -30,7 +29,6 @@ class RMCharacterInfoCollectionViewCell: UICollectionViewCell {
     private let iconImageView: UIImageView = {
         let icon = UIImageView()
         icon.translatesAutoresizingMaskIntoConstraints = false
-        icon.image = UIImage(systemName: "globe.americas")
         icon.contentMode = .scaleAspectFit
         return icon
     }()
@@ -76,8 +74,8 @@ class RMCharacterInfoCollectionViewCell: UICollectionViewCell {
             
             valueLabel.leftAnchor.constraint(equalTo: iconImageView.rightAnchor, constant: 10),
             valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
-            valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 35),
-            valueLabel.heightAnchor.constraint(equalToConstant: 30),
+            valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            valueLabel.bottomAnchor.constraint(equalTo: titleContainerView.topAnchor),
         ])
     }
     
@@ -86,7 +84,15 @@ class RMCharacterInfoCollectionViewCell: UICollectionViewCell {
         valueLabel.text = nil
         titleLabel.text = nil
         iconImageView.image = nil
+        iconImageView.tintColor = .label
+        titleLabel.textColor = .label
     }
     
-    public func configer(with _: RMCharacterInfoCollectionViewCellViewModel) {}
+    public func configer(with viewModel: RMCharacterInfoCollectionViewCellViewModel) {
+        titleLabel.text = viewModel.title
+        valueLabel.text = viewModel.displayValue
+        iconImageView.image = viewModel.iconImage
+        iconImageView.tintColor = viewModel.tintColor
+        titleLabel.textColor = viewModel.tintColor
+    }
 }
