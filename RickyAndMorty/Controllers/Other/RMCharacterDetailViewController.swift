@@ -98,4 +98,17 @@ extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectio
             return cell
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let sectionType = viewModel.sections[indexPath.section]
+        switch sectionType {
+        case .photo, .infomation:
+            break
+        case .episodes:
+            let episodes = self.viewModel.episodes
+            let seletion = episodes[indexPath.row]
+            let vc = RMEpisodeDetailViewController(url: URL(string: seletion))
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
 }

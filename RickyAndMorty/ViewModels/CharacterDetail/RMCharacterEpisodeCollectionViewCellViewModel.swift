@@ -39,7 +39,6 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
         self.episodeDataUrl = episodeDataUrl
     }
      // MARK: - Public
-    
     public func registerForData(_ block: @escaping (RMEpisodeDataRender) -> Void) {
         self.dataBlock = block
     }
@@ -55,7 +54,7 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
             return
         }
         isFetching = true
-        RMService.shared.execute(request, expecting: RMEpisode.self).sink(receiveCompletion:  {
+        RMService.shared.execute(request, expecting: RMEpisode.self).sink(receiveCompletion: {
             completion in
             switch completion {
             case .finished:
