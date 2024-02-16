@@ -20,7 +20,7 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
     private var isFetching = false
     
     private var dataBlock: ((RMEpisodeDataRender) -> Void)?
-    
+        
     private var episode: RMEpisode? {
         didSet {
             guard let model = episode else { 
@@ -54,7 +54,9 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
             return
         }
         isFetching = true
-        RMService.shared.execute(request, expecting: RMEpisode.self).sink(receiveCompletion: {
+        RMService.shared.execute(request,
+                                 expecting: RMEpisode.self)
+            .sink(receiveCompletion: {
             completion in
             switch completion {
             case .finished:

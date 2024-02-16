@@ -6,19 +6,23 @@
 //
 import Alamofire
 import Combine
-import Foundation
 
 /// Primary API service object to get Rick and Morty data
 final class RMService {
     /// Shared singletion instance
     static let shared = RMService()
+    
+    private let cacheManager = RMAPICacheManager()
+    
+    var cancellables = Set<AnyCancellable>()
+
+    
     /// Privatized constructor
     private init() {}
     enum RMServiceError: Error {
         case failedToCreateRequest
         case failedToGetData
     }
-
     /// Send Rick and Morty API Call
     /// - Parameters:
     ///   - request: Request instance
@@ -27,20 +31,53 @@ final class RMService {
     public func execute<T: Codable>(
         _ request: RMRequest,
         expecting type: T.Type
-    ) -> AnyPublisher<T, Error> {
-        guard let urlRequest = self.request(from: request) else {
-            return Fail(error: RMServiceError.failedToCreateRequest).eraseToAnyPublisher()
+    ) -> Future<T, Error> {
+        if let cachedData = cacheManager.cachedResponse(
+            for: request.endpoint,
+            url: request.url
+        ) {
+            do {
+                let result = try JSONDecoder().decode(type.self, from: cachedData)
+                print("Using cached API Response")
+                return Future { promise in
+                    promise(.success(result))
+                }
+            } catch  {
+                return Future { promise in
+                    promise(.failure(error))
+                }
+            }
         }
-        return AF
-            .request(urlRequest)
-            .publishDecodable(type: type)
-            .value().mapError { error in
-                error
-            }.eraseToAnyPublisher()
+        guard let urlRequest = self.request(from: request) else {
+            return Future { promise in
+                promise(.failure(RMServiceError.failedToCreateRequest))
+            }
+        }
+        return Future<T, Error> { promise in
+               AF.request(urlRequest)
+                   .publishDecodable(type: type)
+                   .value()
+                   .sink(
+                       receiveCompletion: { completion in
+                           switch completion {
+                           case .finished:
+                               break // Do nothing for success
+                           case .failure(let error):
+                               promise(.failure(error))
+                           }
+                       },
+                       receiveValue: { value in
+                           promise(.success(value))
+                           // If needed, you can also set the cache here
+                           print(value)
+//                           self.cacheManager.setCache(for: request.endpoint, url: request.url, data: value)
+                       }
+                   )
+                   .store(in: &self.cancellables)
+           }
     }
-
+    
     // MARK: - Private
-
     private func request(from rmRequest: RMRequest) -> URLRequest? {
         guard let url = rmRequest.url else { return nil }
         var request = URLRequest(url: url)
