@@ -12,6 +12,8 @@ class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.backgroundColor = .systemBlue
+        contentView.layer.cornerRadius = 8
     }
 
     @available(*, unavailable)
@@ -25,5 +27,10 @@ class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
     }
 
-    public func configer(with _: RMCharacterEpisodeCollectionViewCellViewModel) {}
+    public func configer(with viewModel: RMCharacterEpisodeCollectionViewCellViewModel) {
+        viewModel.registerForData { data in
+            print(String(describing: data))
+        }
+        viewModel.fetchEpisode()
+    }
 }
