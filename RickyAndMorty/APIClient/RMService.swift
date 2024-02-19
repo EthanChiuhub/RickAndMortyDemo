@@ -69,7 +69,6 @@ final class RMService {
                        receiveValue: { value in
                            promise(.success(value))
                            // If needed, you can also set the cache here
-                           print(value)
 //                           self.cacheManager.setCache(for: request.endpoint, url: request.url, data: value)
                        }
                    )

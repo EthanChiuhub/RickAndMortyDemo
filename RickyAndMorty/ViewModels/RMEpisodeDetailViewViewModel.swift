@@ -6,21 +6,37 @@
 //
 
 import UIKit
+import Combine
 
 class RMEpisodeDetailViewViewModel: NSObject {
     
     private var endpointUrl: URL?
     
+    var cancellables = Set<AnyCancellable>()
+
+    
     init(endpointUrl: URL?) {
+        super.init()
         self.endpointUrl = endpointUrl
-        fetchEpisodeData()
+        self.fetchEpisodeData()
     }
     
     private func fetchEpisodeData() {
-        guard let request = RMRequest(url: endpointUrl) else {
+        guard let url = endpointUrl, let request = RMRequest(url: url) else {
             return
         }
         
+        RMService.shared.execute(request, expecting: RMEpisode.self).sink { completion in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let failure):
+                print(failure)
+            }
+        } receiveValue: { model in
+            print(String(describing: model))
+        }.store(in: &cancellables)
+
     }
 
 }
