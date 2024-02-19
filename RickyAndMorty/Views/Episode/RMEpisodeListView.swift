@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-/// View that handles showing list of characters. loader. etc
+/// View that handles showing list of episode. loader. etc
 final class RMEpisodeListView: UIView {
     var cancellables = Set<AnyCancellable>()
 
@@ -38,7 +38,6 @@ final class RMEpisodeListView: UIView {
     }()
 
     // MARK: - Init
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
