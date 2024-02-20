@@ -21,7 +21,18 @@ final class RMEpisodeViewController: UIViewController {
         title = "Episodes"
         setupView()
         rmEpisodeListView()
+        addSearchButton()
     }
+    
+    private func addSearchButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(didTapSearch))
+    }
+    
+    @objc
+    private func didTapSearch() {
+        
+    }
+
 
     private func setupView() {
         view.addSubview(episodeListView)
