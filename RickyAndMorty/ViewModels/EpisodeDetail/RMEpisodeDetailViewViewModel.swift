@@ -23,6 +23,13 @@ final class RMEpisodeDetailViewViewModel: NSObject {
         }
     }
     
+    enum SectionType {
+        case information(viewModel: [RMEpisodeInfoCollectionViewCellViewModel])
+        case characters(viewMode: [RMCharacterCollectionViewCellViewModel])
+    }
+    
+    public private(set) var sections: [SectionType] = []
+    
     var cancellables = Set<AnyCancellable>()
 
      // MARK: - Init
