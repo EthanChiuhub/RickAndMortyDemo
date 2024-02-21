@@ -17,30 +17,52 @@ final class RMEpisodeDetailViewViewModel: NSObject {
     private var endpointUrl: URL?
     public weak var delegate: RMEpisodeDetailViewViewModelDeleagate?
     
-    private var dataTuple: (RMEpisode, [RMCharacter])? {
+    private var dataTuple: (episode: RMEpisode, characters: [RMCharacter])? {
         didSet {
+            createCellViewModels()
             delegate?.didFetchEpisodeDetails()
         }
     }
     
     enum SectionType {
         case information(viewModel: [RMEpisodeInfoCollectionViewCellViewModel])
-        case characters(viewMode: [RMCharacterCollectionViewCellViewModel])
+        case characters(viewModel: [RMCharacterCollectionViewCellViewModel])
     }
     
-    public private(set) var sections: [SectionType] = []
+    public private(set) var cellViewModels: [SectionType] = []
     
     var cancellables = Set<AnyCancellable>()
-
-     // MARK: - Init
+    
+    // MARK: - Init
     init(endpointUrl: URL?) {
         super.init()
         self.endpointUrl = endpointUrl
     }
     
-     // MARK: - Public
+    // MARK: - Public
     
-     // MARK: - Private
+    // MARK: - Private
+    
+    private func createCellViewModels() {
+        guard let dataTuple = dataTuple else { return }
+        let episode = dataTuple.episode
+        let characters = dataTuple.characters
+        cellViewModels = [
+            .information(viewModel: [
+                .init(title: "Episode Name", value: episode.name),
+                .init(title: "Air Date", value: episode.airdate),
+                .init(title: "Episode", value: episode.episode),
+                .init(title: "Create", value: episode.created),
+            ]),
+            .characters(viewModel: characters.compactMap({
+                return RMCharacterCollectionViewCellViewModel(
+                    characterName: $0.name,
+                    characterStatus: $0.status,
+                    characterImageUrl: URL(string: $0.image))
+            }))
+        ]
+    }
+    
     /// Fetch backing episode model
     public func fetchEpisodeData() {
         guard let url = endpointUrl, let request = RMRequest(url: url) else {
@@ -65,10 +87,6 @@ final class RMEpisodeDetailViewViewModel: NSObject {
         }).compactMap({
             return RMRequest(url: $0)
         })
-        
-        // 10 of parallel requests
-        
-        //notified once all done
         let group = DispatchGroup()
         var characters: [RMCharacter] = []
         for request in requests {
@@ -80,7 +98,7 @@ final class RMEpisodeDetailViewViewModel: NSObject {
                 switch completion {
                 case .finished:
                     break
-                case .failure(let failure):
+                case .failure(_):
                     break
                 }
             } receiveValue: { model in
@@ -89,10 +107,9 @@ final class RMEpisodeDetailViewViewModel: NSObject {
         }
         group.notify(queue: .main) {
             self.dataTuple = (
-            episode,
-            characters
+                episode: episode,
+                characters: characters
             )
         }
     }
-
 }
