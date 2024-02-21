@@ -8,13 +8,13 @@
 import UIKit
 
 /// VC to show details about single episode
-class RMEpisodeDetailViewController: UIViewController, RMEpisodeDetailViewViewModelDeleagate {
-        
+class RMEpisodeDetailViewController: UIViewController {
+    
     private let viewModel: RMEpisodeDetailViewViewModel
     
     private let detailView = RMEpisodeDetailView()
     
- // MARK: - Init
+    // MARK: - Init
     init(url: URL?) {
         self.viewModel = RMEpisodeDetailViewViewModel(endpointUrl: url)
         super.init(nibName: nil, bundle: nil)
@@ -24,10 +24,11 @@ class RMEpisodeDetailViewController: UIViewController, RMEpisodeDetailViewViewMo
         fatalError()
     }
     
-     // MARK: - Lify cycle
+    // MARK: - Lify cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(detailView)
+        detailView.delegate = self
         addConstraint()
         title = "Episode"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
@@ -50,7 +51,17 @@ class RMEpisodeDetailViewController: UIViewController, RMEpisodeDetailViewViewMo
     }
 }
 
-extension RMEpisodeDetailViewController {
+extension RMEpisodeDetailViewController: RMEpisodeDetailViewViewModelDeleagate, RMEpisodeDetailDelegate{
+    
+    func rmEpisodeDetailView(
+        _ detailView: RMEpisodeDetailView,
+        didSelect character: RMCharacter
+    ) {
+        let vc = RMCharacterDetailViewController(viewModel: .init(character: character))
+        vc.title = character.name
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     /// Delegate Func
     func didFetchEpisodeDetails() {
