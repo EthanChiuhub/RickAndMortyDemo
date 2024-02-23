@@ -148,7 +148,7 @@ extension RMEpisodeDetailView: UICollectionViewDelegate, UICollectionViewDataSou
         let sections = viewModel.cellViewModels
         let sectionType = sections[indexPath.section]
         switch sectionType {
-        case .information(let viewModels):
+        case .information(_):
             break
         case .characters:
             guard let character = viewModel.character(at: indexPath.row) else { return }
