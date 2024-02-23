@@ -59,7 +59,7 @@ enum RMSettingsOption: CaseIterable {
         case .rateApp:
             return UIImage(systemName: "star.fill")
         case .contactUs:
-            return UIImage(systemName: "paperplans")
+            return UIImage(systemName: "paperplane")
         case .terms:
             return UIImage(systemName: "doc")
         case .privacy:
