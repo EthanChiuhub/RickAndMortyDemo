@@ -4,6 +4,7 @@
 //
 //  Created by Yi Chun Chiu on 2023/7/19.
 //
+import StoreKit
 import SafariServices
 import SwiftUI
 import UIKit
@@ -53,7 +54,11 @@ final class RMSettingsViewController: UIViewController {
             let vc = SFSafariViewController(url: url)
             present(vc, animated: true)
         } else if option == .rateApp {
-            
+            Task { @MainActor [weak self] in
+                if let windowScene = self?.view.window?.windowScene {
+                    SKStoreReviewController.requestReview(in: windowScene)
+                }
+            }
         }
     }
 }
