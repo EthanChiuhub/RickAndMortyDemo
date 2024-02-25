@@ -8,29 +8,50 @@
 import UIKit
 import Combine
 
+protocol RMLocationViewModelDeleagate: AnyObject {
+    func didFetchInitialLocations()
+}
+
 final class RMLocationViewModel {
     
-    private var locations: [RMLocation] = []
+    private var locations: [RMLocation] = [] {
+        didSet {
+            for location in locations {
+                let cellViewModel = RMLocationViewCellViewModel(location: location)
+                if !cellViewModels.contains(cellViewModel) {
+                    cellViewModels.append(cellViewModel)
+                }
+            }
+        }
+    }
+    
+    weak var delegate: RMLocationViewModelDeleagate?
     
     // Location response info
     // Will contain next url, if present
     
-    private var cellViewModels: [String] = []
+    private var apiInfo: RMGetLocationsResponse.Info?
+    
+    public private(set) var cellViewModels: [RMLocationViewCellViewModel] = []
     
     private var cancelables = Set<AnyCancellable>()
     
     init() {}
     
     public func fetchLocations() {
-        RMService.shared.execute(.listLocationRequests, expecting: String.self).sink(receiveCompletion: { completion in
+        RMService.shared.execute(.listLocationRequests, expecting: RMGetLocationsResponse.self).sink(receiveCompletion: { completion in
             switch completion {
             case .finished:
                 break
-            case .failure(let failure):
+            case .failure(_):
                 fatalError("Something worng")
             }
-        }, receiveValue: { string in
-            print(string)
+        }, receiveValue: { [weak self] model in
+            self?.apiInfo = model.info
+            self?.locations = model.results
+            DispatchQueue.main.async {
+                self?.delegate?.didFetchInitialLocations()
+            }
         }).store(in: &cancelables)
     }
     
