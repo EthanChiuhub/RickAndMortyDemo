@@ -51,7 +51,7 @@ final class RMLocationViewModel {
             case .finished:
                 break
             case .failure(_):
-                fatalError("Something worng")
+                fatalError("Something wrong")
             }
         }, receiveValue: { [weak self] model in
             self?.apiInfo = model.info
