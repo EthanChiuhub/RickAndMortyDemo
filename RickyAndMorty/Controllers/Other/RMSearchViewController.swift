@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 // Dynamic search option view
 // Render results
@@ -14,6 +15,8 @@ import UIKit
 
 /// Configurable controller to search
 class RMSearchViewController: UIViewController {
+    
+    private let searchView: RMSearchView
     
     /// Configuration for search session
     struct Config {
@@ -36,10 +39,12 @@ class RMSearchViewController: UIViewController {
         let type: `Type`
     }
     
-    private let config: Config
+    private let viewModel: RMSearchViewViewModel
     
     init(config: Config) {
-        self.config = config
+        let viewModel = RMSearchViewViewModel(config: config)
+        self.viewModel = viewModel
+        self.searchView = RMSearchView(frame: .zero, viewModel: viewModel)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,8 +56,25 @@ class RMSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = config.type.title
+        title = viewModel.config.type.title
         view.backgroundColor = .systemBackground
+        view.addSubview(searchView)
+        addConstraints()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Search", style: .done, target: self, action: #selector(didTapExcuteSearch))
+    }
+    
+    @objc
+    private func didTapExcuteSearch() {
+//        viewModel.executeSearch()
+    }
+    
+    private func addConstraints() {
+        searchView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.left.equalTo(view.safeAreaLayoutGuide)
+            make.right.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 
 }
