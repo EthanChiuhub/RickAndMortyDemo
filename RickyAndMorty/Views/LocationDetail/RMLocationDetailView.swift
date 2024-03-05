@@ -33,7 +33,6 @@ final class RMLocationDetailView: UIView {
 
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView()
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.hidesWhenStopped = true
         return spinner
     }()
@@ -60,18 +59,14 @@ final class RMLocationDetailView: UIView {
         guard let collectionView = collectionView else {
             return
         }
+            spinner.snp.makeConstraints { make in
+                make.height.width.equalTo(100)
+                make.centerX.centerY.equalTo(self)
+            }
 
-        NSLayoutConstraint.activate([
-            spinner.heightAnchor.constraint(equalToConstant: 100),
-            spinner.widthAnchor.constraint(equalToConstant: 100),
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.leftAnchor.constraint(equalTo: leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: rightAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
+            collectionView.snp.makeConstraints { make in
+                make.edges.equalTo(self)
+            }
     }
 
     private func createColectionView() -> UICollectionView {

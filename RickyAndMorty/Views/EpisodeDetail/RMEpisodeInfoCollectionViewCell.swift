@@ -14,7 +14,6 @@ final class RMEpisodeInfoCollectionViewCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -23,7 +22,6 @@ final class RMEpisodeInfoCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 20, weight: .regular)
         label.textAlignment = .right
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -40,18 +38,24 @@ final class RMEpisodeInfoCollectionViewCell: UICollectionViewCell {
     }
     
     private func addConstraint() {
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            titleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            
-            valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
-            valueLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            
-            titleLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.47),
-            valueLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.47),
-        ])
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(contentView).offset(10)
+            make.left.equalTo(contentView).offset(10)
+            make.bottom.equalTo(contentView).offset(-10)
+            make.width.equalTo(contentView).multipliedBy(0.47)
+        }
+        
+        valueLabel.snp.makeConstraints { make in
+            make.top.equalTo(contentView).offset(10)
+            make.right.equalTo(contentView).offset(-10)
+            make.bottom.equalTo(contentView).offset(-4)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(contentView).offset(10)
+            make.left.equalTo(contentView).offset(10)
+            make.width.equalTo(contentView).multipliedBy(0.47)
+        }
     }
     
     private func setUpLayer() {

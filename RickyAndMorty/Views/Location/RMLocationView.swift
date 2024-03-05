@@ -28,7 +28,6 @@ class RMLocationView: UIView {
     
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
-        table.translatesAutoresizingMaskIntoConstraints = false
         table.alpha = 0
         table.isHidden = true
         table.register(RMLocationTableViewCell.self, forCellReuseIdentifier: RMLocationTableViewCell.cellIdentifier)
@@ -36,8 +35,7 @@ class RMLocationView: UIView {
     }()
     
     private let spinner: UIActivityIndicatorView = {
-       let spinner = UIActivityIndicatorView()
-        spinner.translatesAutoresizingMaskIntoConstraints = false
+        let spinner = UIActivityIndicatorView()
         spinner.hidesWhenStopped = true
         return spinner
     }()
@@ -63,18 +61,15 @@ class RMLocationView: UIView {
     }
     
     private func addConstraint() {
-        NSLayoutConstraint.activate([
-            
-            spinner.widthAnchor.constraint(equalToConstant: 100),
-            spinner.heightAnchor.constraint(equalToConstant: 100),
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-            
-            tableView.topAnchor.constraint(equalTo: topAnchor),
-            tableView.leftAnchor.constraint(equalTo: leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
+        spinner.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
+            make.centerX.centerY.equalTo(self)
+        }
+        
+        tableView.snp.makeConstraints({ make in
+            make.edges.equalTo(self)
+        })
+        
     }
     
     // MARK: - Public

@@ -38,12 +38,10 @@ final class RMEpisodeViewController: UIViewController {
 
     private func setupView() {
         view.addSubview(episodeListView)
-        NSLayoutConstraint.activate([
-            episodeListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            episodeListView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            episodeListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            episodeListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
+        
+        episodeListView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 
     // MARK: - RMEpisodeListView Combine function

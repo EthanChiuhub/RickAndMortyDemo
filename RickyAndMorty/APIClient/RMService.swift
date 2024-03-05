@@ -31,11 +31,11 @@ final class RMService {
     public func execute<T: Codable>(
         _ request: RMRequest,
         expecting type: T.Type
-    ) -> AnyPublisher<T, AFError> {
-        if let cachedData = cacheManager.cachedResponse(
-            for: request.endpoint,
-            url: request.url
-        ) {
+    ) -> AnyPublisher<T, RMServiceError> {
+//        if let cachedData = cacheManager.cachedResponse(
+//            for: request.endpoint,
+//            url: request.url
+//        ) {
 //            do {
 //                let result = try JSONDecoder().decode(type.self, from: cachedData)
 //                print("Using cached API Response")
@@ -47,18 +47,17 @@ final class RMService {
 //                    promise(.failure(error))
 //                }
 //            }
-        }
+//        }
         guard let urlRequest = self.request(from: request) else {
-            return Fail(error: RMServiceError.failedToCreateRequest as! AFError).eraseToAnyPublisher()
+            return Fail(error: RMServiceError.failedToCreateRequest).eraseToAnyPublisher()
         }
         
         return AF
             .request(urlRequest)
             .publishDecodable(type: type)
             .value().mapError { error in
-                return AFError.requestAdaptationFailed(error: error)
+                return RMServiceError.failedToGetData
             }.eraseToAnyPublisher()
-
     }
     
     // MARK: - Private

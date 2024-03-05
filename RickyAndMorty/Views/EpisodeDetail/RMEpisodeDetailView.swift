@@ -31,7 +31,6 @@ final class RMEpisodeDetailView: UIView {
     
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView()
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.hidesWhenStopped = true
         return spinner
     }()
@@ -60,17 +59,15 @@ final class RMEpisodeDetailView: UIView {
         guard let collectionView = collectionView else {
             return
         }
-        NSLayoutConstraint.activate([
-            spinner.heightAnchor.constraint(equalToConstant: 100),
-            spinner.widthAnchor.constraint(equalToConstant: 100),
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-            
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.leftAnchor.constraint(equalTo: leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: rightAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
+        
+        spinner.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
+            make.centerX.centerY.equalTo(self)
+        }
+        
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
     }
     
     private func createCollectionView() -> UICollectionView {

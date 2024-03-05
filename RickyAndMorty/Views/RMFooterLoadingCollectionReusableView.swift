@@ -13,7 +13,6 @@ final class RMFooterLoadingCollectionReusableView: UICollectionReusableView {
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.hidesWhenStopped = true
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         return spinner
     }()
 
@@ -30,12 +29,10 @@ final class RMFooterLoadingCollectionReusableView: UICollectionReusableView {
     }
 
     private func addConstraints() {
-        NSLayoutConstraint.activate([
-            spinner.widthAnchor.constraint(equalToConstant: 100),
-            spinner.heightAnchor.constraint(equalToConstant: 100),
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-        ])
+        spinner.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
+            make.centerX.centerY.equalTo(self)
+        }
     }
 
     public func startAnimating() {

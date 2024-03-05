@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 
 // Dynamic search option view
 // Render results

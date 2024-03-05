@@ -28,12 +28,9 @@ final class RMLocationViewController: UIViewController, RMLocationViewModelDelea
     }
     
     private func addConstraints() {
-        NSLayoutConstraint.activate([
-            primaryView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            primaryView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            primaryView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            primaryView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
+        primaryView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     private func addSearchButton() {
@@ -53,7 +50,7 @@ final class RMLocationViewController: UIViewController, RMLocationViewModelDelea
     }
     
     // MARK: - LocationViewDelegate
-
+    
     func rmLocationView(_ locationView: RMLocationView, didSelect location: RMLocation) {
         let vc = RMLocationDetailViewController(location: location)
         vc.navigationItem.largeTitleDisplayMode = .never

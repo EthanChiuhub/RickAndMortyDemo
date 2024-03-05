@@ -12,21 +12,18 @@ class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
     
     private let seasonLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
     }()
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 22, weight: .regular)
         return label
     }()
     
     private let airDateLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 18, weight: .light)
         return label
     }()
@@ -53,22 +50,26 @@ class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
     }
 
     private func setUpConstraints() {
-        NSLayoutConstraint.activate([
-            seasonLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            seasonLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            seasonLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            seasonLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.3),
-            
-            nameLabel.topAnchor.constraint(equalTo: seasonLabel.bottomAnchor),
-            nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            nameLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.3),
-            
-           airDateLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
-           airDateLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
-           airDateLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-           airDateLabel.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.3),
-        ])
+        
+        seasonLabel.snp.makeConstraints { make in
+            make.top.right.equalTo(contentView)
+            make.left.equalTo(contentView).offset(10)
+            make.height.equalTo(contentView).multipliedBy(0.3)
+        }
+        
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(seasonLabel.snp.bottom)
+            make.left.equalTo(contentView).offset(10)
+            make.right.equalTo(contentView)
+            make.height.equalTo(contentView).multipliedBy(0.3)
+        }
+        
+        airDateLabel.snp.makeConstraints { make in
+            make.top.equalTo(nameLabel.snp.bottom)
+            make.left.equalTo(contentView).offset(10)
+            make.right.equalTo(contentView)
+            make.height.equalTo(contentView).multipliedBy(0.3)
+        }
     }
 
     override func prepareForReuse() {

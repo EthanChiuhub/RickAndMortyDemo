@@ -16,7 +16,6 @@ final class RMCharacterDetailView: UIView {
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.hidesWhenStopped = true
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         return spinner
     }()
 
@@ -40,19 +39,14 @@ final class RMCharacterDetailView: UIView {
         guard let collectionView = collectionView else {
             return
         }
-
-        NSLayoutConstraint.activate([
-            spinner.widthAnchor.constraint(equalToConstant: 100),
-            spinner.heightAnchor.constraint(equalToConstant: 100),
-            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.leftAnchor.constraint(equalTo: leftAnchor),
-            collectionView.rightAnchor.constraint(equalTo: rightAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-        ])
+        
+        spinner.snp.makeConstraints { make in
+                   make.width.height.equalTo(100)
+                   make.centerX.centerY.equalTo(self)
+               }
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
     }
 
     private func createCollectionView() -> UICollectionView {
@@ -66,7 +60,6 @@ final class RMCharacterDetailView: UIView {
                                 forCellWithReuseIdentifier: RMCharacterInfoCollectionViewCell.cellIdentifier)
         collectionView.register(RMCharacterEpisodeCollectionViewCell.self,
                                 forCellWithReuseIdentifier: RMCharacterEpisodeCollectionViewCell.cellIdentifier)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }
 

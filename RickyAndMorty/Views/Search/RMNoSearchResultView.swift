@@ -32,7 +32,7 @@ class RMNoSearchReslutView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isHidden = true
-//        translatesAutoresizingMaskIntoConstraints = false
+        translatesAutoresizingMaskIntoConstraints = false
         addSubviews(iconView, label)
         addConstraint()
         configure()
@@ -54,10 +54,7 @@ class RMNoSearchReslutView: UIView {
             make.centerX.equalTo(self)
         }
         label.snp.makeConstraints { make in
-            make.left.equalTo(self)
-            make.right.equalTo(self)
-            make.bottom.equalTo(self)
-//            make.height.greaterThanOrEqualTo(60)
+            make.left.right.bottom.equalTo(self)
             make.top.equalTo(iconView.snp.bottom).offset(10)
         }
     }

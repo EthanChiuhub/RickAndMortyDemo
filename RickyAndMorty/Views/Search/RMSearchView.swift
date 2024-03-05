@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 
 class RMSearchView: UIView {
     
@@ -22,7 +21,6 @@ class RMSearchView: UIView {
         self.viewModel = viewModel
         super.init(frame: frame)
         backgroundColor = .systemBackground
-        translatesAutoresizingMaskIntoConstraints = false
         addSubviews(noResultsView, searchInputView)
         addConstraint()
         searchInputView.configure(with: RMSearchInputViewViewModel(type: viewModel.config.type))
@@ -35,9 +33,7 @@ class RMSearchView: UIView {
     private func addConstraint() {
         
         searchInputView.snp.makeConstraints { make in
-            make.top.equalTo(self)
-            make.left.equalTo(self)
-            make.right.equalTo(self)
+            make.edges.equalTo(self)
             make.height.equalTo(110)
         }
         

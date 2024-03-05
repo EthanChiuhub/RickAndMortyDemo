@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (5.8.1)
-  - SwiftFormat/CLI (0.52.11)
+  - SwiftFormat/CLI (0.53.0)
   - SwiftLint (0.54.0)
 
 DEPENDENCIES:
@@ -16,7 +16,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
-  SwiftFormat: 2ca3d0b75754193f0f3ba532291f25ae08dd1e42
+  SwiftFormat: 5c50ccf2c2b178fe5e46cc75e43555b09d72b103
   SwiftLint: c1de071d9d08c8aba837545f6254315bc900e211
 
 PODFILE CHECKSUM: 0a28e8b14d0731a2d868e71aa318c65f2621fa54

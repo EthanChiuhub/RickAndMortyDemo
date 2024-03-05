@@ -11,23 +11,23 @@ import UIKit
 final class RMCharacterDetailViewController: UIViewController {
     private let viewModel: RMCharacterDetailViewViewModel
     private let detailView: RMCharacterDetailView
-
+    
     // MARK: - Init
-
+    
     init(viewModel: RMCharacterDetailViewViewModel) {
         self.viewModel = viewModel
         detailView = RMCharacterDetailView(frame: .zero, viewModel: viewModel)
         super.init(nibName: nil,
                    bundle: nil)
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("Unsupported")
     }
-
+    
     // MARK: - Lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -42,19 +42,16 @@ final class RMCharacterDetailViewController: UIViewController {
         detailView.collectionView?.delegate = self
         detailView.collectionView?.dataSource = self
     }
-
+    
     @objc
     func didTapShare() {
         // Share character info
     }
-
+    
     private func addConstraints() {
-        NSLayoutConstraint.activate([
-            detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            detailView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
-            detailView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-            detailView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
+        detailView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
@@ -64,7 +61,7 @@ extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectio
     func numberOfSections(in _: UICollectionView) -> Int {
         return viewModel.sections.count
     }
-
+    
     func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionType = viewModel.sections[section]
         switch sectionType {
@@ -76,7 +73,7 @@ extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectio
             return viewModel.count
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let sectionType = viewModel.sections[indexPath.section]
         switch sectionType {
