@@ -51,7 +51,12 @@ class RMSearchViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-     // MARK: - Life cycle
+    // MARK: - Life cycle
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        searchView.presentKeyboard()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,11 +65,12 @@ class RMSearchViewController: UIViewController {
         view.addSubview(searchView)
         addConstraints()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Search", style: .done, target: self, action: #selector(didTapExcuteSearch))
+        searchView.delegate = self
     }
     
     @objc
     private func didTapExcuteSearch() {
-//        viewModel.executeSearch()
+        //        viewModel.executeSearch()
     }
     
     private func addConstraints() {
@@ -75,5 +81,12 @@ class RMSearchViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
+}
 
+// MARK: - RMSearchViewDelegate
+
+extension RMSearchViewController: RMSearchViewDelegate {
+    func rmSearchView(_ searchView: RMSearchView, didSelectOption: RMSearchInputViewViewModel.DynamicOption) {
+        print("Should present option picker")
+    }
 }

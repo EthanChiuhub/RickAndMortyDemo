@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol RMSearchInputViewDelegate: AnyObject {
+    func rmSearchInputView(_ inputView: RMSearchInputView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption)
+}
+
 final class RMSearchInputView: UIView {
+    
+    weak var delegate: RMSearchInputViewDelegate?
     
     private let searchBar: UISearchBar = {
        let searBar = UISearchBar()
@@ -29,7 +35,6 @@ final class RMSearchInputView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemMint
         translatesAutoresizingMaskIntoConstraints = false
         addSubviews(searchBar)
         addConstraints()
@@ -39,6 +44,7 @@ final class RMSearchInputView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+     // MARK: - Private
     private func addConstraints() {
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(self)
@@ -49,15 +55,69 @@ final class RMSearchInputView: UIView {
     }
     
     private func createOptionSelectionViews(option: [RMSearchInputViewViewModel.DynamicOption]) {
-        for option in option {
-            print(option.rawValue)
+        let stackView = createOptionStackView()
+        for x in 0..<option.count {
+            let option = option[x]
+           let button = createButton(with: option, tag: x)
+            stackView.addArrangedSubview(button)
         }
     }
     
+    private func createButton(
+        with option: RMSearchInputViewViewModel.DynamicOption,
+        tag: Int) -> UIButton {
+        let button = UIButton()
+        button.setAttributedTitle(NSAttributedString(
+            string: option.rawValue,
+            attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .medium),
+                         .foregroundColor: UIColor.label]),
+                                  for: .normal)
+        button.setTitle(option.rawValue, for: .normal)
+        button.backgroundColor = .secondarySystemBackground
+        button.setTitleColor(.label, for: .normal)
+        button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+        button.tag = tag
+        button.layer.cornerRadius = 6
+        return button
+    }
+    
+    @objc
+    private func didTapButton(_ sender: UIButton) {
+        guard let options = viewModel?.option else {
+            return
+        }
+        let tag = sender.tag
+        let selected = options[tag]
+        delegate?.rmSearchInputView(self, didSelectOption: selected)
+    }
+    
+    
+    
+    private func createOptionStackView() -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 6
+        stackView.alignment = .center
+        addSubview(stackView)
+        
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(searchBar.snp.bottom)
+            make.left.right.bottom.equalTo(self)
+        }
+        
+        return stackView
+    }
+    
+     // MARK: - Public
     public func configure(with viewModel: RMSearchInputViewViewModel) {
         searchBar.placeholder = viewModel.searchPlaceholderText
         #warning(" TODO: Fix height of input view for episode with no options")
         self.viewModel = viewModel
+    }
+    
+    public func presentKeyboard() {
+        searchBar.becomeFirstResponder()
     }
     
 }

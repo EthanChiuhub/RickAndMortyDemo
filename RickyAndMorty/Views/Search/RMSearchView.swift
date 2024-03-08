@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol RMSearchViewDelegate: AnyObject {
+    func rmSearchView(_ searchView: RMSearchView, didSelectOption: RMSearchInputViewViewModel.DynamicOption)
+}
+
 class RMSearchView: UIView {
+    
+    weak var delegate: RMSearchViewDelegate?
     
     private let viewModel: RMSearchViewViewModel
     
@@ -24,6 +30,7 @@ class RMSearchView: UIView {
         addSubviews(noResultsView, searchInputView)
         addConstraint()
         searchInputView.configure(with: RMSearchInputViewViewModel(type: viewModel.config.type))
+        searchInputView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -31,10 +38,9 @@ class RMSearchView: UIView {
     }
     
     private func addConstraint() {
-        
         searchInputView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
-            make.height.equalTo(110)
+            make.top.left.right.equalTo(self)
+            make.height.equalTo(viewModel.config.type == .episode ? 55 : 110)
         }
         
         noResultsView.snp.makeConstraints { make in
@@ -42,9 +48,14 @@ class RMSearchView: UIView {
             make.centerX.centerY.equalTo(self)
         }
     }
+    
+    public func presentKeyboard() {
+        searchInputView.presentKeyboard()
+    }
 
 }
 
+ // MARK: - Collection Delegate
 extension RMSearchView: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 0
@@ -58,5 +69,11 @@ extension RMSearchView: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         
+    }
+}
+
+extension RMSearchView: RMSearchInputViewDelegate {
+    func rmSearchInputView(_ inputView: RMSearchInputView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption) {
+        delegate?.rmSearchView(self, didSelectOption: option)
     }
 }

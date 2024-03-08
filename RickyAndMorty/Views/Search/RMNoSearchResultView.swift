@@ -15,7 +15,7 @@ class RMNoSearchReslutView: UIView {
     private let iconView: UIImageView = {
        let iconView = UIImageView()
         iconView.contentMode = .scaleAspectFit
-        iconView.tintColor = .systemBlue
+        iconView.tintColor = .systemRed
         return iconView
     }()
     
