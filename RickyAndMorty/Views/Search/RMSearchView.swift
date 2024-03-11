@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RMSearchViewDelegate: AnyObject {
-    func rmSearchView(_ searchView: RMSearchView, didSelectOption: RMSearchInputViewViewModel.DynamicOption)
+    func rmSearchView(_ searchView: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption)
 }
 
 class RMSearchView: UIView {
@@ -31,6 +31,11 @@ class RMSearchView: UIView {
         addConstraint()
         searchInputView.configure(with: RMSearchInputViewViewModel(type: viewModel.config.type))
         searchInputView.delegate = self
+        viewModel.registerOptionChangeBlock { tuple in
+            // tuple: Option | newValue
+            print(String(describing: tuple))
+            self.searchInputView.update(option: tuple.0, value: tuple.1)
+        }
     }
     
     required init?(coder: NSCoder) {

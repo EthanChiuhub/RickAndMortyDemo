@@ -70,7 +70,7 @@ class RMSearchViewController: UIViewController {
     
     @objc
     private func didTapExcuteSearch() {
-        //        viewModel.executeSearch()
+        viewModel.executeSearch()
     }
     
     private func addConstraints() {
@@ -86,9 +86,11 @@ class RMSearchViewController: UIViewController {
 // MARK: - RMSearchViewDelegate
 
 extension RMSearchViewController: RMSearchViewDelegate {
-    func rmSearchView(_ searchView: RMSearchView, didSelectOption: RMSearchInputViewViewModel.DynamicOption) {
-        let vc = RMSearchOptionPickerViewController(option: didSelectOption) { selection in
-            print("Did select: \(selection)")
+    func rmSearchView(_ searchView: RMSearchView, didSelectOption option: RMSearchInputViewViewModel.DynamicOption) {
+        let vc = RMSearchOptionPickerViewController(option: option) { [weak self] selection in
+            DispatchQueue.main.async {
+                self?.viewModel.set(value: selection, for: option)
+            }
         }
         vc.sheetPresentationController?.detents = [.medium()]
         vc.sheetPresentationController?.prefersGrabberVisible = true

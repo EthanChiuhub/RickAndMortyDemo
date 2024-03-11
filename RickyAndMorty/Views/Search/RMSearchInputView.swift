@@ -16,7 +16,7 @@ final class RMSearchInputView: UIView {
     weak var delegate: RMSearchInputViewDelegate?
     
     private let searchBar: UISearchBar = {
-       let searBar = UISearchBar()
+        let searBar = UISearchBar()
         searBar.placeholder = "Search"
         return searBar
     }()
@@ -31,6 +31,8 @@ final class RMSearchInputView: UIView {
         }
     }
     
+    private var stackView: UIStackView?
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -44,7 +46,7 @@ final class RMSearchInputView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-     // MARK: - Private
+    // MARK: - Private
     private func addConstraints() {
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(self)
@@ -56,9 +58,10 @@ final class RMSearchInputView: UIView {
     
     private func createOptionSelectionViews(option: [RMSearchInputViewViewModel.DynamicOption]) {
         let stackView = createOptionStackView()
+        self.stackView = stackView
         for x in 0..<option.count {
             let option = option[x]
-           let button = createButton(with: option, tag: x)
+            let button = createButton(with: option, tag: x)
             stackView.addArrangedSubview(button)
         }
     }
@@ -66,20 +69,20 @@ final class RMSearchInputView: UIView {
     private func createButton(
         with option: RMSearchInputViewViewModel.DynamicOption,
         tag: Int) -> UIButton {
-        let button = UIButton()
-        button.setAttributedTitle(NSAttributedString(
-            string: option.rawValue,
-            attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .medium),
-                         .foregroundColor: UIColor.label]),
-                                  for: .normal)
-        button.setTitle(option.rawValue, for: .normal)
-        button.backgroundColor = .secondarySystemBackground
-        button.setTitleColor(.label, for: .normal)
-        button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
-        button.tag = tag
-        button.layer.cornerRadius = 6
-        return button
-    }
+            let button = UIButton()
+            button.setAttributedTitle(NSAttributedString(
+                string: option.rawValue,
+                attributes: [.font: UIFont.systemFont(ofSize: 18, weight: .medium),
+                             .foregroundColor: UIColor.label]),
+                                      for: .normal)
+            button.setTitle(option.rawValue, for: .normal)
+            button.backgroundColor = .secondarySystemBackground
+            button.setTitleColor(.label, for: .normal)
+            button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+            button.tag = tag
+            button.layer.cornerRadius = 6
+            return button
+        }
     
     @objc
     private func didTapButton(_ sender: UIButton) {
@@ -109,10 +112,10 @@ final class RMSearchInputView: UIView {
         return stackView
     }
     
-     // MARK: - Public
+    // MARK: - Public
     public func configure(with viewModel: RMSearchInputViewViewModel) {
         searchBar.placeholder = viewModel.searchPlaceholderText
-        #warning(" TODO: Fix height of input view for episode with no options")
+#warning(" TODO: Fix height of input view for episode with no options")
         self.viewModel = viewModel
     }
     
@@ -120,4 +123,24 @@ final class RMSearchInputView: UIView {
         searchBar.becomeFirstResponder()
     }
     
+    public func update(
+        option: RMSearchInputViewViewModel.DynamicOption,
+        value: String
+    ) {
+        guard let buttons = stackView?.arrangedSubviews as? [UIButton],
+              let allOptions = viewModel?.option,
+              let index = allOptions.firstIndex(of: option) else {
+            return
+        }
+        let button: UIButton = buttons[index]
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: value.uppercased(),
+                attributes: [
+                    .font: UIFont.systemFont(ofSize: 18, weight: .medium),
+                    .foregroundColor: UIColor.link
+                ]
+            ),
+            for: .normal)
+    }
 }
