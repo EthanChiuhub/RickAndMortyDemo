@@ -94,8 +94,6 @@ final class RMSearchInputView: UIView {
         delegate?.rmSearchInputView(self, didSelectOption: selected)
     }
     
-    
-    
     private func createOptionStackView() -> UIStackView {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -108,14 +106,13 @@ final class RMSearchInputView: UIView {
             make.top.equalTo(searchBar.snp.bottom)
             make.left.right.bottom.equalTo(self)
         }
-        
         return stackView
     }
     
     // MARK: - Public
     public func configure(with viewModel: RMSearchInputViewViewModel) {
         searchBar.placeholder = viewModel.searchPlaceholderText
-#warning(" TODO: Fix height of input view for episode with no options")
+#warning("TODO: Fix height of input view for episode with no options")
         self.viewModel = viewModel
     }
     
@@ -141,6 +138,7 @@ final class RMSearchInputView: UIView {
                     .foregroundColor: UIColor.link
                 ]
             ),
-            for: .normal)
+            for: .normal
+        )
     }
 }
