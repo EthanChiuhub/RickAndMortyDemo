@@ -21,34 +21,58 @@ class RMSearchView: UIView {
     
     private let searchInputView = RMSearchInputView()
     
+    private let resultsView = RMSearchResultsView()
+    
     // MARK: - Init
     
     init(frame: CGRect, viewModel: RMSearchViewViewModel) {
         self.viewModel = viewModel
         super.init(frame: frame)
         backgroundColor = .systemBackground
-        addSubviews(noResultsView, searchInputView)
+        addSubviews(resultsView, noResultsView, searchInputView)
         addConstraint()
         searchInputView.configure(with: RMSearchInputViewViewModel(type: viewModel.config.type))
         searchInputView.delegate = self
-        viewModel.registerOptionChangeBlock { tuple in
-            // tuple: Option | newValue
-            print(String(describing: tuple))
-            self.searchInputView.update(option: tuple.0, value: tuple.1)
-        }
-        viewModel.reqisterSearchResultHander { results in
-            print("Results: \(results)")
-        }
+        
+        setUpHandlers()
+        
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError()
     }
     
+    private func setUpHandlers() {
+        viewModel.registerOptionChangeBlock { tuple in
+            // tuple: Option | newValue
+            print(String(describing: tuple))
+            self.searchInputView.update(option: tuple.0, value: tuple.1)
+        }
+        viewModel.reqisterSearchResultHander { [weak self] results in
+            DispatchQueue.main.async { [weak self] in
+                self?.resultsView.configure(with: results)
+                self?.noResultsView.isHidden = true
+                self?.resultsView.isHidden = false
+            }
+        }
+        viewModel.reqisterNoResultHander {
+            DispatchQueue.main.async { [weak self] in
+                self?.noResultsView.isHidden = false
+                self?.resultsView.isHidden = true
+            }
+        }
+    }
+    
     private func addConstraint() {
         searchInputView.snp.makeConstraints { make in
             make.top.left.right.equalTo(self)
             make.height.equalTo(viewModel.config.type == .episode ? 55 : 110)
+        }
+        
+        resultsView.snp.makeConstraints { make in
+            make.top.equalTo(searchInputView.snp.bottom)
+            make.left.right.bottom.equalTo(self)
         }
         
         noResultsView.snp.makeConstraints { make in

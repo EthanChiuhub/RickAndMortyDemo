@@ -16,6 +16,8 @@ final class RMSearchViewViewModel {
     
     private var searchResultHandler: ((RMSearchResultViewModel) -> Void)?
     
+    private var noResultsHandler: (() -> Void)?
+    
     var cancellables = Set<AnyCancellable>()
     
     private var optionMapUpdateBlock: (((RMSearchInputViewViewModel.DynamicOption, String)) -> Void)?
@@ -29,6 +31,10 @@ final class RMSearchViewViewModel {
     
     public func reqisterSearchResultHander(_ block: @escaping (RMSearchResultViewModel) -> Void) {
         self.searchResultHandler = block
+    }
+    
+    public func reqisterNoResultHander(_ block: @escaping () -> Void) {
+        self.noResultsHandler = block
     }
     
     public func executeSearch() {
@@ -64,6 +70,7 @@ final class RMSearchViewViewModel {
                 print("API FINISH")
             case .failure(let error):
                 print("API ERROR: \(error)")
+                self.handleNoResults()
             }
         } receiveValue: { [weak self] result in
             self?.processSearchResults(model: result)
@@ -95,8 +102,13 @@ final class RMSearchViewViewModel {
         if let results = resultsVM {
             self.searchResultHandler?(results)
         } else {
-            // fallback error
+            handleNoResults()
         }
+    }
+    
+    private func handleNoResults() {
+        print("no results")
+        noResultsHandler?()
     }
     
     public func set(query text: String) {
