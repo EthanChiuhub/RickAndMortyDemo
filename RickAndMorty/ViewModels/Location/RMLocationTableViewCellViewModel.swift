@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RMLocationViewCellViewModel: Hashable, Equatable {
+struct RMLocationTableViewCellViewModel: Hashable, Equatable {
     
     private let location: RMLocation
     
@@ -27,7 +27,7 @@ struct RMLocationViewCellViewModel: Hashable, Equatable {
         return location.dimension
     }
     
-    static func == (lhs: RMLocationViewCellViewModel, rhs: RMLocationViewCellViewModel) -> Bool {
+    static func == (lhs: RMLocationTableViewCellViewModel, rhs: RMLocationTableViewCellViewModel) -> Bool {
         return lhs.location.id == rhs.location.id
     }
     

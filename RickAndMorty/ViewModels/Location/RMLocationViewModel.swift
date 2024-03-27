@@ -17,7 +17,7 @@ final class RMLocationViewModel {
     private var locations: [RMLocation] = [] {
         didSet {
             for location in locations {
-                let cellViewModel = RMLocationViewCellViewModel(location: location)
+                let cellViewModel = RMLocationTableViewCellViewModel(location: location)
                 if !cellViewModels.contains(cellViewModel) {
                     cellViewModels.append(cellViewModel)
                 }
@@ -32,7 +32,7 @@ final class RMLocationViewModel {
     
     private var apiInfo: RMGetAllLocationsResponse.Info?
     
-    public private(set) var cellViewModels: [RMLocationViewCellViewModel] = []
+    public private(set) var cellViewModels: [RMLocationTableViewCellViewModel] = []
     
     private var cancelables = Set<AnyCancellable>()
     

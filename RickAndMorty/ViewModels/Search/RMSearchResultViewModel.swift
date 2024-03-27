@@ -11,5 +11,5 @@ import Foundation
 enum RMSearchResultViewModel {
     case characters([RMCharacterCollectionViewCellViewModel])
     case episodes([RMCharacterEpisodeCollectionViewCellViewModel])
-    case locations([RMLocationViewCellViewModel])
+    case locations([RMLocationTableViewCellViewModel])
 }

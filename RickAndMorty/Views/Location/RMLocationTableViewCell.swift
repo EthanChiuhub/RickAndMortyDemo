@@ -69,7 +69,7 @@ class RMLocationTableViewCell: UITableViewCell {
         }
     }
     
-    public func configure(with viewModel: RMLocationViewCellViewModel) {
+    public func configure(with viewModel: RMLocationTableViewCellViewModel) {
         nameLabel.text = viewModel.name
         typeLabel.text = viewModel.type
         dimensionLabel.text = viewModel.dimension

@@ -18,6 +18,8 @@ final class RMSearchViewViewModel {
     
     private var noResultsHandler: (() -> Void)?
     
+    private var searchResultsModel: Codable?
+    
     var cancellables = Set<AnyCancellable>()
     
     private var optionMapUpdateBlock: (((RMSearchInputViewViewModel.DynamicOption, String)) -> Void)?
@@ -93,13 +95,14 @@ final class RMSearchViewViewModel {
                 )}))
         } else if let locationResults = model as? RMGetAllLocationsResponse {
             resultsVM = .locations(locationResults.results.compactMap({
-                return RMLocationViewCellViewModel(location: $0)
+                return RMLocationTableViewCellViewModel(location: $0)
             }))
         } else {
             print("Unknown result type")
         }
         
         if let results = resultsVM {
+            self.searchResultsModel = model
             self.searchResultHandler?(results)
         } else {
             handleNoResults()
@@ -125,4 +128,11 @@ final class RMSearchViewViewModel {
         _ block: @escaping ((RMSearchInputViewViewModel.DynamicOption, String)) -> Void) {
             self.optionMapUpdateBlock = block
         }
+    
+    public func locationSearchResult(at index: Int) -> RMLocation? {
+        guard let searchModel = searchResultsModel as? RMGetAllLocationsResponse else {
+            return nil
+        }
+        return searchModel.results[index]
+    }
 }
