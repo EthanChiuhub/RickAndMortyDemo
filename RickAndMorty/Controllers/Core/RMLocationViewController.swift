@@ -12,7 +12,7 @@ final class RMLocationViewController: UIViewController, RMLocationViewModelDelea
     
     private let primaryView = RMLocationView()
     
-    private let viewModel = RMLocationViewModel()
+    private let viewModel = RMLocationViewViewModel()
     
     // MARK: - Life cycle
     override func viewDidLoad() {
