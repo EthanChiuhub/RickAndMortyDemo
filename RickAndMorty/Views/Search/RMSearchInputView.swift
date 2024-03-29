@@ -116,7 +116,6 @@ final class RMSearchInputView: UIView {
     // MARK: - Public
     public func configure(with viewModel: RMSearchInputViewViewModel) {
         searchBar.placeholder = viewModel.searchPlaceholderText
-#warning("TODO: Fix height of input view for episode with no options")
         self.viewModel = viewModel
     }
     
@@ -151,7 +150,6 @@ final class RMSearchInputView: UIView {
 extension RMSearchInputView: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // Notify delegate of change text
-        print(searchText)
         delegate?.rmSearchInputView(self, didChangeSearchText: searchText)
     }
     

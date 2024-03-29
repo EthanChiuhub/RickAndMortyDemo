@@ -37,7 +37,6 @@ class RMLocationTableViewCell: UITableViewCell {
         contentView.addSubviews(nameLabel, typeLabel, dimensionLabel)
         addConstraint()
         accessoryType = .disclosureIndicator
-        
     }
     
     required init?(coder: NSCoder) {
@@ -52,19 +51,20 @@ class RMLocationTableViewCell: UITableViewCell {
     }
     
     private func addConstraint() {
-        
         nameLabel.snp.makeConstraints { make in
             make.top.left.equalTo(contentView).offset(10)
             make.right.equalTo(contentView).offset(-10)
         }
         
         typeLabel.snp.makeConstraints { make in
-            make.top.left.equalTo(contentView).offset(10)
+            make.top.equalTo(nameLabel.snp.bottom).offset(10)
+            make.left.equalTo(contentView).offset(10)
             make.right.equalTo(contentView).offset(-10)
         }
         
         dimensionLabel.snp.makeConstraints { make in
-            make.top.left.equalTo(10)
+            make.top.equalTo(typeLabel.snp.bottom).offset(10)
+            make.left.equalTo(10)
             make.right.bottom.equalTo(-10)
         }
     }
@@ -73,7 +73,6 @@ class RMLocationTableViewCell: UITableViewCell {
         nameLabel.text = viewModel.name
         typeLabel.text = viewModel.type
         dimensionLabel.text = viewModel.dimension
-        
     }
     
 }

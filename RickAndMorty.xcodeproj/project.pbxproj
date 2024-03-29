@@ -243,7 +243,6 @@
 				3B663DFF2A77EB5500F199E3 /* RMGetAllCharactersResponse.swift */,
 				AA8AA8322B833052007AAB12 /* RMGetAllEpisodesResponse.swift */,
 				3B2B6CC32B8AD06E00E30899 /* RMGetAllLocationsResponse.swift */,
-				AA97712B2BAD5ED8001931CB /* RMCharacterListViewViewModel.swift */,
 			);
 			path = APIResponseTypes;
 			sourceTree = "<group>";
@@ -400,6 +399,7 @@
 		AA86F3322A667D7A00E1126F /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				AA97712B2BAD5ED8001931CB /* RMCharacterListViewViewModel.swift */,
 				3BB5114A2B94B6AC00623B74 /* Search */,
 				3B2B6CC02B89975C00E30899 /* Location */,
 				AAD8FCD22B86F0A3006B9005 /* Settings */,
