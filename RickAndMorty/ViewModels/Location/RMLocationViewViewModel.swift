@@ -27,9 +27,6 @@ final class RMLocationViewViewModel {
     
     weak var delegate: RMLocationViewModelDeleagate?
     
-    // Location response info
-    // Will contain next url, if present
-    
     private var apiInfo: RMGetAllLocationsResponse.Info?
     
     public private(set) var cellViewModels: [RMLocationTableViewCellViewModel] = []
@@ -40,10 +37,16 @@ final class RMLocationViewViewModel {
     
     public var isLoadingMoreLocations = false
     
+    private var didFinishPagination: (() -> Void)?
+    
     private var cancellables = Set<AnyCancellable>()
     
      // MARK: - Init
     init() {}
+    
+    public func registerDidFinishPaginationBlock(_ block: @escaping () -> Void) {
+        self.didFinishPagination = block
+    }
     
     public func fetchAdditionalLocations() {
         guard !isLoadingMoreLocations else {
@@ -79,13 +82,14 @@ final class RMLocationViewViewModel {
                 }
                 let moreResults = responseModel.results
                 let info = responseModel.info
-                print("More Location: \(moreResults.count)")
                 strongSelf.apiInfo = info
                 strongSelf.cellViewModels.append(contentsOf: moreResults.compactMap({
                     return RMLocationTableViewCellViewModel(location: $0)
                 }))
                 DispatchQueue.main.async {
                     strongSelf.isLoadingMoreLocations = false
+                    // Notify via callback
+                    strongSelf.didFinishPagination?()
                 }
             }).store(in: &cancellables)
     }

@@ -23,6 +23,12 @@ class RMLocationView: UIView {
             UIView.animate(withDuration: 0.3) {
                 self.tableView.alpha = 1
             }
+            viewModel?.registerDidFinishPaginationBlock({  [weak self] in
+                DispatchQueue.main.async {
+                    self?.tableView.tableFooterView = nil
+                    self?.tableView.reloadData()
+                }
+            })
         }
     }
     
@@ -47,6 +53,7 @@ class RMLocationView: UIView {
         spinner.startAnimating()
         addConstraint()
         configureTable()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -123,15 +130,12 @@ extension RMLocationView: UIScrollViewDelegate {
             let offset = scrollView.contentOffset.y
             let totalContentHeight = scrollView.contentSize.height
             let totalScrollViewFixedHeight = scrollView.frame.size.height
-
+            
             if offset >= (totalContentHeight - totalScrollViewFixedHeight - 120) {
                 DispatchQueue.main.async {
                     self?.showLoadingIdicator()
                 }
                 viewModel.fetchAdditionalLocations()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self?.tableView.reloadData()
-                }
             }
             timer.invalidate()
         }
