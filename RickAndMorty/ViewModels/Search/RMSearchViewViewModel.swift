@@ -40,7 +40,9 @@ final class RMSearchViewViewModel {
     }
     
     public func executeSearch() {
-        print("Search text: \(String(describing: searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)))")
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return
+        }
         var queryParams: [URLQueryItem] = [URLQueryItem(name: "name", value: searchText)]
         queryParams.append(contentsOf: optionMap.enumerated().compactMap({ _, element in
             let key: RMSearchInputViewViewModel.DynamicOption = element.key
@@ -58,7 +60,7 @@ final class RMSearchViewViewModel {
             makeSearchAPICall(RMGetAllCharacterResponse.self, request: request)
             
         case .episode:
-            makeSearchAPICall(RMGetEpisodesResponse.self, request: request)
+            makeSearchAPICall(RMGetAllEpisodesResponse.self, request: request)
             
         case .location:
             makeSearchAPICall(RMGetAllLocationsResponse.self, request: request)
@@ -80,30 +82,34 @@ final class RMSearchViewViewModel {
     }
     
     private func processSearchResults(model: Codable) {
-        var resultsVM: RMSearchResultViewModel?
+        var resultsVM: RMSearchResultViewType?
+        var nextUrl: String?
         if let characterResults = model as? RMGetAllCharacterResponse {
             resultsVM = .characters(characterResults.results.compactMap({
                 return RMCharacterCollectionViewCellViewModel(
                     characterName: $0.name,
                     characterStatus: $0.status,
-                    characterImageUrl: URL(string: $0.image))
+                    characterImageUrl: URL(string: $0.image)
+                )
             }))
-        } else if let episodeResults = model as? RMGetEpisodesResponse {
+            nextUrl = characterResults.info.next
+        } else if let episodeResults = model as? RMGetAllEpisodesResponse {
             resultsVM = .episodes(episodeResults.results.compactMap({
                 return RMCharacterEpisodeCollectionViewCellViewModel(
                     episodeDataUrl: URL(string: $0.url)
                 )}))
+            nextUrl = episodeResults.info.next
         } else if let locationResults = model as? RMGetAllLocationsResponse {
             resultsVM = .locations(locationResults.results.compactMap({
                 return RMLocationTableViewCellViewModel(location: $0)
             }))
-        } else {
-            print("Unknown result type")
+            nextUrl = locationResults.info.next
         }
         
         if let results = resultsVM {
             self.searchResultsModel = model
-            self.searchResultHandler?(results)
+            let vm = RMSearchResultViewModel(results: results, next: nextUrl)
+            self.searchResultHandler?(vm)
         } else {
             handleNoResults()
         }

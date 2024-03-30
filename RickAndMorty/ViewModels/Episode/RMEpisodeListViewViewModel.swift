@@ -46,12 +46,12 @@ final class RMEpisodeListViewViewModel: NSObject {
 
     private var cellViewModels: [RMCharacterEpisodeCollectionViewCellViewModel] = []
 
-    private var apiInfo: RMGetEpisodesResponse.Info! = nil
+    private var apiInfo: RMGetAllEpisodesResponse.Info! = nil
 
     /// Fetch initial set of characters(20)
     public func fetchEpisodes() {
         RMService.shared.execute(.listEpisodeRequests,
-                                 expecting: RMGetEpisodesResponse.self)
+                                 expecting: RMGetAllEpisodesResponse.self)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -80,7 +80,7 @@ final class RMEpisodeListViewViewModel: NSObject {
         }
         // Fetch characters
         RMService.shared.execute(request,
-                                 expecting: RMGetEpisodesResponse.self)
+                                 expecting: RMGetAllEpisodesResponse.self)
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
