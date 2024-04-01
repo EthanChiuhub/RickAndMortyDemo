@@ -23,7 +23,7 @@ final class RMEpisodeDetailView: UIView {
             spinner.stopAnimating()
             self.collectionView?.reloadData()
             self.collectionView?.isHidden = false
-            UIView.animate(withDuration: 0.3) {x
+            UIView.animate(withDuration: 0.3) {
                 self.collectionView?.alpha = 1
             }
         }
