@@ -23,6 +23,7 @@
 		3B2B6CCF2B8B346D00E30899 /* RMLcationDetailViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2B6CCE2B8B346D00E30899 /* RMLcationDetailViewViewModel.swift */; };
 		3B663E002A77EB5500F199E3 /* RMGetAllCharactersResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B663DFF2A77EB5500F199E3 /* RMGetAllCharactersResponse.swift */; };
 		3B663E062A77F47D00F199E3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B663E052A77F47D00F199E3 /* Extensions.swift */; };
+		3BB2D7222BB7D4A300F2E3EC /* Pods-RickAndMorty.debug development.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EDB9F84D338E2EFAA13FFB45 /* Pods-RickAndMorty.debug development.xcconfig */; };
 		3BB5114C2B94B6CD00623B74 /* RMNoSearchResultsViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB5114B2B94B6CD00623B74 /* RMNoSearchResultsViewViewModel.swift */; };
 		AA092F972A692AB400D15A6D /* RMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA092F962A692AB400D15A6D /* RMService.swift */; };
 		AA092F992A692AC400D15A6D /* RMRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA092F982A692AC400D15A6D /* RMRequest.swift */; };
@@ -632,6 +633,7 @@
 			files = (
 				AA86F3292A66755B00E1126F /* LaunchScreen.storyboard in Resources */,
 				AA86F3262A66755B00E1126F /* Assets.xcassets in Resources */,
+				3BB2D7222BB7D4A300F2E3EC /* Pods-RickAndMorty.debug development.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,9 @@ import UIKit
 
 protocol RMSearchResultsViewDelegate: AnyObject {
     func rmSearchResultsView(_ resultsView: RMSearchResultsView, didTapLocationAt index: Int)
+    func rmSearchResultsView(_ resultsView: RMSearchResultsView, didTapCharacterAt index: Int)
+    func rmSearchResultsView(_ resultsView: RMSearchResultsView, didTapEpisodeAt index: Int)
+
 }
 
 /// Shows search results UI (table or collection as needed)
@@ -157,16 +160,29 @@ extension RMSearchResultsView: UICollectionViewDelegateFlowLayout,
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        guard let viewModel = viewModel else {
+            return
+        }
+        switch viewModel.results {
+        case .characters:
+            delegate?.rmSearchResultsView(self, didTapCharacterAt: indexPath.row)
+        case .episodes:
+            delegate?.rmSearchResultsView(self, didTapEpisodeAt: indexPath.row)
+        case .locations:
+            break
+        }
+
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let currentViewModel = collectionViewCellViewModels[indexPath.row]
         let bounds = UIScreen.main.bounds
         if currentViewModel is RMCharacterCollectionViewCellViewModel {
-            let width = (bounds.width - 30) / 2
-            return CGSize(width: width, height: width * 1.5)
+            let width = UIDevice.isiPhone ? (bounds.width - 30) / 2 : (bounds.width - 50) / 4
+            return CGSize(width: width,
+                          height: width * 1.5)
         }
-        let width = bounds.width - 20
+        let width = UIDevice.isiPhone ? (bounds.width - 20) : (bounds.width - 50) / 4
         return CGSize(width: width,
                       height: 100)
     }
@@ -197,9 +213,9 @@ extension RMSearchResultsView: UICollectionViewDelegateFlowLayout,
 extension RMSearchResultsView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if locationCellViewModels.isEmpty {
-            handleLocationPagination(scrollView: scrollView)
-        } else {
             handleCharacterOrEpisodePagination(scrollView: scrollView)
+        } else {
+            handleLocationPagination(scrollView: scrollView)
         }
     }
     
@@ -216,16 +232,25 @@ extension RMSearchResultsView: UIScrollViewDelegate {
             let totalScrollViewFixedHeight = scrollView.frame.size.height
             
             if offset >= (totalContentHeight - totalScrollViewFixedHeight - 120) {
-                viewModel.fetchAdditionalResults { [weak self] newResult in
-                    // Refresh table
-                    self?.tableView.tableFooterView = nil
-                    self?.collectionViewCellViewModels = newResult
-                    print("Should add more result for search results")
+                viewModel.fetchAdditionalResults { [weak self] newResults in
+                    guard let strongSelf = self else { return }
+                    DispatchQueue.main.async {
+                        strongSelf.tableView.tableFooterView = nil
+                        let originalCount = strongSelf.collectionViewCellViewModels.count
+                        let newCount = (newResults.count - originalCount)
+                        let total = originalCount + newCount
+                        let startingIndex = total - newCount
+                        let indexPathsToAdd: [IndexPath] = Array(startingIndex..<(startingIndex+newCount)).compactMap({
+                            return IndexPath(row: $0, section: 0)
+                        })
+                        strongSelf.collectionViewCellViewModels = newResults
+                        strongSelf.collectionView.insertItems(at: indexPathsToAdd)
+                    }
                 }
             }
             timer.invalidate()
         }
-
+        
     }
     
     private func handleLocationPagination(scrollView: UIScrollView) {

@@ -126,4 +126,12 @@ extension RMSearchView: RMSearchResultsViewDelegate {
         }
         delegate?.rmSearchView(self, didSelectLocation: locationModel)
     }
+    
+    func rmSearchResultsView(_ resultsView: RMSearchResultsView, didTapCharacterAt index: Int) {
+        <#code#>
+    }
+    
+    func rmSearchResultsView(_ resultsView: RMSearchResultsView, didTapEpisodeAt index: Int) {
+        <#code#>
+    }
 }
